@@ -241,7 +241,7 @@ def plot_resnet_architecture():
     ax.axis('off')
 
     # 残差块示意图
-    ax.text(6, 7.5, 'Residual Block (残差块)', fontsize=16, fontweight='bold',
+    ax.text(6, 7.5, 'Residual Block', fontsize=16, fontweight='bold',
             ha='center')
 
     # 输入
@@ -279,8 +279,8 @@ def plot_resnet_architecture():
             bbox=dict(boxstyle='round,pad=0.3', facecolor='lightcoral'))
 
     # 说明文字
-    ax.text(6, 0.1, 'ResNet核心: 学习残差映射 F(x) = H(x) - x\n'
-            '跳跃连接使得梯度可以直接流向前层，解决梯度消失问题',
+    ax.text(6, 0.1, 'ResNet Core: F(x) = H(x) - x\n'
+            'Skip connections enable direct gradient flow to shallower layers, mitigating the vanishing gradient issue',
             fontsize=10, ha='center', style='italic')
 
     plt.tight_layout()
