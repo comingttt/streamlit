@@ -510,7 +510,7 @@ def show_loss_page():
     的计算过程。你可以手动调整各类别的分数，观察损失值的变化。
     """)
     
-    col1, col2 = st.columns([1, 1.5])
+    col1, col2 = st.columns([1, 1])
     
     with col1:
         st.subheader("🎯 模拟分数输入")
@@ -549,127 +549,29 @@ def show_loss_page():
         st.subheader("📊 损失计算对比")
         
         # 计算两种损失
-        ce_loss, probs = compute_loss_demo(scores.reshape(1, -1), np.array([true_class]), 'softmax')
-        svm_loss, per_sample_loss = compute_loss_demo(scores.reshape(1, -1), np.array([true_class]), 'svm')
+        ce_loss, _ = compute_loss_demo(scores.reshape(1, -1), np.array([true_class]), 'softmax')
+        svm_loss, _ = compute_loss_demo(scores.reshape(1, -1), np.array([true_class]), 'svm')
         
-        # 显示损失值
+        # 显示损失值（大号醒目显示）
+        st.markdown("---")
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.metric("交叉熵损失 (Cross-Entropy)", f"{ce_loss:.4f}",
-                     help="越小越好，完美预测时为0")
+            st.metric(
+                "交叉熵损失",
+                f"{ce_loss:.4f}",
+                delta=None,
+                delta_color="normal",
+                help="Cross-Entropy Loss —— 越小越好，完美预测时为0"
+            )
         with col_m2:
-            st.metric("合页损失 (Hinge Loss)", f"{svm_loss:.4f}",
-                     help="越小越好，完美预测时为0")
-        
-        # 分数可视化
-        fig, axes = plt.subplots(2, 1, figsize=(10, 8))
-        
-        # Raw scores
-        colors = ['green' if i == true_class else 'steelblue' for i in range(10)]
-        bars1 = axes[0].bar(range(10), scores, color=colors, edgecolor='gray', width=0.7)
-        axes[0].axhline(y=0, color='gray', linewidth=0.8)
-        axes[0].set_xticks(range(10))
-        axes[0].set_xticklabels(CIFAR10_CLASSES_EN, rotation=45, ha='right', fontsize=9)
-        axes[0].set_ylabel('Raw Scores (Logits)', fontsize=11)
-        axes[0].set_title('Raw Scores by Class (green = true class)', fontsize=13)
-        axes[0].grid(True, alpha=0.3, axis='y')
-        
-        # Show values on bars
-        for bar, val in zip(bars1, scores):
-            axes[0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
-                        f'{val:.2f}', ha='center', va='bottom', fontsize=8)
-        
-        # Softmax probabilities
-        axes[1].bar(range(10), probs[0], color=colors, edgecolor='gray', width=0.7)
-        axes[1].set_xticks(range(10))
-        axes[1].set_xticklabels(CIFAR10_CLASSES_EN, rotation=45, ha='right', fontsize=9)
-        axes[1].set_ylabel('Softmax Probability', fontsize=11)
-        axes[1].set_title('Softmax Normalized Probability Distribution', fontsize=13)
-        axes[1].grid(True, alpha=0.3, axis='y')
-        
-        for bar, val in zip(bars1, probs[0]):
-            axes[1].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.005,
-                        f'{val:.2%}', ha='center', va='bottom', fontsize=8)
-        
-        plt.tight_layout()
-        st.pyplot(fig)
-        plt.close()
-        
-        # 从CIFAR-10中取真实样本展示
-        st.subheader("📸 从CIFAR-10取真实样本展示损失")
-        
-        with st.spinner("正在加载CIFAR-10样本..."):
-            X_train, y_train, X_test, y_test, _ = load_cifar10_cached()
-            # 取一个小批量测试样本
-            rng = np.random.RandomState(42)
-            n_sample = 50
-            test_idx = rng.choice(len(X_test), n_sample, replace=False)
-            X_sample = X_test[test_idx]
-            y_sample = y_test[test_idx]
-            X_sample_norm = (X_sample - np.mean(X_sample, axis=0)) / (np.std(X_sample, axis=0) + 1e-8)
-        
-        # 使用一个随机线性分类器（模拟训练不好的情况）
-        np.random.seed(123)
-        W_random = np.random.randn(3072, 10) * 0.01
-        b_random = np.zeros(10)
-        scores_random = X_sample_norm @ W_random + b_random
-        
-        # 使用一个"训练过"的简单分类器
-        from sklearn.linear_model import LogisticRegression
-        lr_clf = LogisticRegression(max_iter=200, solver='lbfgs', multi_class='multinomial')
-        lr_clf.fit(X_sample_norm, y_sample)
-        scores_trained = lr_clf.decision_function(X_sample_norm)
-        
-        col_s1, col_s2 = st.columns(2)
-        
-        with col_s1:
-            # 随机分类器的损失
-            ce_rand, _ = compute_loss_demo(scores_random, y_sample, 'softmax')
-            svm_rand, _ = compute_loss_demo(scores_random, y_sample, 'svm')
-            
-            st.markdown("**随机初始化的分类器**")
-            st.metric("交叉熵损失", f"{ce_rand:.4f}")
-            st.metric("合页损失", f"{svm_rand:.4f}")
-        
-        with col_s2:
-            # 训练过的分类器的损失
-            ce_train, _ = compute_loss_demo(scores_trained, y_sample, 'softmax')
-            svm_train, _ = compute_loss_demo(scores_trained, y_sample, 'svm')
-            
-            st.markdown("**训练后的分类器 (LogisticRegression)**")
-            st.metric("交叉熵损失", f"{ce_train:.4f}")
-            st.metric("合页损失", f"{svm_train:.4f}")
-        
-        # 损失趋势对比图（模拟不同训练阶段）
-        st.subheader("训练过程中两种损失的变化趋势模拟")
-        
-        # 模拟损失下降
-        epochs_sim = 50
-        np.random.seed(42)
-        # 模拟交叉熵损失从高到低
-        ce_trend = 2.5 * np.exp(-0.08 * np.arange(epochs_sim)) + 0.2 + 0.1 * np.random.randn(epochs_sim).cumsum() * 0.02
-        ce_trend = np.maximum(ce_trend, 0.01)
-        # 模拟合页损失从高到低
-        svm_trend = 8.0 * np.exp(-0.06 * np.arange(epochs_sim)) + 0.5 + 0.3 * np.random.randn(epochs_sim).cumsum() * 0.02
-        svm_trend = np.maximum(svm_trend, 0.01)
-        
-        fig2, ax = plt.subplots(figsize=(10, 5))
-        ax.plot(range(1, epochs_sim + 1), ce_trend, 'b-', linewidth=2, label='Cross-Entropy Loss', alpha=0.8)
-        ax.plot(range(1, epochs_sim + 1), svm_trend, 'r-', linewidth=2, label='Hinge Loss', alpha=0.8)
-        ax.set_xlabel('Training Step', fontsize=12)
-        ax.set_ylabel('Loss Value', fontsize=12)
-        ax.set_title('Loss Function Trends During Training', fontsize=13)
-        ax.legend(fontsize=11)
-        ax.grid(True, alpha=0.3)
-        
-        st.pyplot(fig2)
-        plt.close()
-        
-        st.info("""
-        **两种损失函数的特点对比：**
-        - **交叉熵损失**: 对概率分布建模，梯度与Softmax概率和真实标签的差值成正比，训练时能提供更平滑的梯度。
-        - **合页损失**: 只关注分类边界附近的样本（支持向量），对已正确分类且远离边界的样本不产生梯度，训练更"节约"。
-        """)
+            st.metric(
+                "合页损失",
+                f"{svm_loss:.4f}",
+                delta=None,
+                delta_color="normal",
+                help="Hinge Loss —— 越小越好，完美预测时为0"
+            )
+        st.markdown("---")
 
 
 # ============================================================
