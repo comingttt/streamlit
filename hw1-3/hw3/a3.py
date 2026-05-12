@@ -1,11 +1,18 @@
 import cv2
 import numpy as np
-import tkinter as tk
-from tkinter import filedialog, ttk
-from PIL import Image, ImageTk
+from PIL import Image
 import matplotlib
 matplotlib.use('Agg')  # 使用非交互式后端
 import threading
+
+# tkinter 仅在独立运行时导入（Streamlit Cloud 无 tkinter）
+try:
+    import tkinter as tk
+    from tkinter import filedialog, ttk
+    from PIL import ImageTk
+    _HAS_TK = True
+except ImportError:
+    _HAS_TK = False
 
 # ==================== 核心处理函数（供Streamlit调用）====================
 
@@ -997,6 +1004,9 @@ class ComputerVisionApp:
             self.panorama_status_label.config(text=f"拼接失败，状态码: {status}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = ComputerVisionApp(root)
-    root.mainloop()
+    if _HAS_TK:
+        root = tk.Tk()
+        app = ComputerVisionApp(root)
+        root.mainloop()
+    else:
+        print("tkinter 不可用，请通过 Streamlit 启动：streamlit run app.py")
