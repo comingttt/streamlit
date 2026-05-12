@@ -185,7 +185,7 @@ def show_latent_explorer_page():
 
         fig_gen, ax_gen = plt.subplots(figsize=(3, 3))
         ax_gen.imshow(generated, cmap="gray")
-        ax_gen.set_title(f"生成图像 @ ({z1:.2f}, {z2:.2f})")
+        ax_gen.set_title(f"Generated @ ({z1:.2f}, {z2:.2f})")
         ax_gen.axis("off")
         st.pyplot(fig_gen)
         plt.close()
@@ -228,7 +228,7 @@ def show_latent_explorer_page():
 
         # 原始图像 A
         axes_interp[0].imshow(test_imgs[idx1].squeeze().numpy(), cmap="gray")
-        axes_interp[0].set_title(f"原始 A\n数字 {test_lbls[idx1].item()}")
+        axes_interp[0].set_title(f"Original A\nDigit {test_lbls[idx1].item()}")
         axes_interp[0].axis("off")
 
         # 插值序列
@@ -239,7 +239,7 @@ def show_latent_explorer_page():
 
         # 原始图像 B
         axes_interp[-1].imshow(test_imgs[idx2].squeeze().numpy(), cmap="gray")
-        axes_interp[-1].set_title(f"原始 B\n数字 {test_lbls[idx2].item()}")
+        axes_interp[-1].set_title(f"Original B\nDigit {test_lbls[idx2].item()}")
         axes_interp[-1].axis("off")
 
         plt.tight_layout()
@@ -286,7 +286,7 @@ def show_latent_explorer_page():
         for i in range(n_random, len(axes_rand)):
             axes_rand[i].axis("off")
 
-        plt.suptitle("随机潜向量 → 生成图像", fontsize=14)
+        plt.suptitle("Random Latent → Generated Images", fontsize=14)
         plt.tight_layout()
         st.pyplot(fig_rand)
         plt.close()

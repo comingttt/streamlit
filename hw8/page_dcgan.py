@@ -158,7 +158,7 @@ def show_dcgan_page():
         for i in range(n_gen, len(axes_gen)):
             axes_gen[i].axis("off")
 
-        plt.suptitle("DCGAN 生成的 MNIST 风格图像", fontsize=14, fontweight="bold")
+        plt.suptitle("DCGAN Generated MNIST-style Images", fontsize=14, fontweight="bold")
         plt.tight_layout()
         st.pyplot(fig_gen)
         plt.close()
@@ -172,7 +172,7 @@ def show_dcgan_page():
         im = ax_noise.imshow(noise_sample[:, :16].numpy(), cmap="coolwarm", aspect="auto")
         ax_noise.set_xlabel("Noise Dimension")
         ax_noise.set_ylabel("Sample Index")
-        ax_noise.set_title("噪声向量可视化（前 16 维）")
+        ax_noise.set_title("Noise Vector (first 16 dims)")
         plt.colorbar(im, ax=ax_noise)
         st.pyplot(fig_noise)
         plt.close()
@@ -206,19 +206,19 @@ def show_dcgan_page():
 
             fig_score, (ax_s1, ax_s2) = plt.subplots(1, 2, figsize=(12, 4))
 
-            ax_s1.hist(real_scores, bins=20, alpha=0.7, color="green", label=f"真实样本 (avg={real_scores.mean():.3f})")
-            ax_s1.hist(fake_scores, bins=20, alpha=0.7, color="red", label=f"生成样本 (avg={fake_scores.mean():.3f})")
-            ax_s1.set_xlabel("判别器分数")
-            ax_s1.set_ylabel("频次")
-            ax_s1.set_title("判别器分数分布")
+            ax_s1.hist(real_scores, bins=20, alpha=0.7, color="green", label=f"Real (avg={real_scores.mean():.3f})")
+            ax_s1.hist(fake_scores, bins=20, alpha=0.7, color="red", label=f"Fake (avg={fake_scores.mean():.3f})")
+            ax_s1.set_xlabel("Discriminator Score")
+            ax_s1.set_ylabel("Count")
+            ax_s1.set_title("Discriminator Score Distribution")
             ax_s1.legend()
             ax_s1.grid(True, alpha=0.3)
 
-            categories = ["真实样本", "生成样本"]
+            categories = ["Real", "Fake"]
             means = [real_scores.mean(), fake_scores.mean()]
             ax_s2.bar(categories, means, color=["green", "red"], alpha=0.7)
-            ax_s2.set_ylabel("平均分数")
-            ax_s2.set_title("判别器平均分数对比")
+            ax_s2.set_ylabel("Average Score")
+            ax_s2.set_title("Discriminator Avg Score Comparison")
             for i, v in enumerate(means):
                 ax_s2.text(i, v + 0.01, f"{v:.3f}", ha="center", fontweight="bold")
 
@@ -244,7 +244,7 @@ def show_dcgan_page():
             ax_loss.plot(epochs_range, d_losses, "r-s", markersize=5, label="Discriminator Loss")
             ax_loss.set_xlabel("Epoch")
             ax_loss.set_ylabel("Loss (BCE)")
-            ax_loss.set_title("DCGAN 训练 Loss 曲线")
+            ax_loss.set_title("DCGAN Training Loss")
             ax_loss.legend()
             ax_loss.grid(True, alpha=0.3)
             st.pyplot(fig_loss)

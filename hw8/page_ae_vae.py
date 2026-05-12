@@ -171,23 +171,23 @@ def show_ae_vae_page():
             vae_diff = np.abs(orig - vae_r)
 
             axes[i, 0].imshow(orig, cmap="gray")
-            axes[i, 0].set_title(f"原始 ({test_lbls[i].item()})" if i == 0 else "")
+            axes[i, 0].set_title(f"Original ({test_lbls[i].item()})" if i == 0 else "")
             axes[i, 0].axis("off")
 
             axes[i, 1].imshow(ae_r, cmap="gray")
-            axes[i, 1].set_title("AE 重构" if i == 0 else "")
+            axes[i, 1].set_title("AE Recon" if i == 0 else "")
             axes[i, 1].axis("off")
 
             axes[i, 2].imshow(vae_r, cmap="gray")
-            axes[i, 2].set_title("VAE 重构" if i == 0 else "")
+            axes[i, 2].set_title("VAE Recon" if i == 0 else "")
             axes[i, 2].axis("off")
 
             axes[i, 3].imshow(ae_diff, cmap="hot")
-            axes[i, 3].set_title("AE 误差" if i == 0 else "")
+            axes[i, 3].set_title("AE Error" if i == 0 else "")
             axes[i, 3].axis("off")
 
             axes[i, 4].imshow(vae_diff, cmap="hot")
-            axes[i, 4].set_title("VAE 误差" if i == 0 else "")
+            axes[i, 4].set_title("VAE Error" if i == 0 else "")
             axes[i, 4].axis("off")
 
         plt.tight_layout()
@@ -237,8 +237,8 @@ def show_ae_vae_page():
         ax3.hist(ae_mse, bins=30, alpha=0.6, label=f"AE (avg={ae_mse.mean():.4f})", color="blue")
         ax3.hist(vae_mse, bins=30, alpha=0.6, label=f"VAE (avg={vae_mse.mean():.4f})", color="red")
         ax3.set_xlabel("MSE")
-        ax3.set_ylabel("频次")
-        ax3.set_title("重构误差分布")
+        ax3.set_ylabel("Count")
+        ax3.set_title("Reconstruction Error Distribution")
         ax3.legend()
         ax3.grid(True, alpha=0.3)
 
@@ -246,7 +246,7 @@ def show_ae_vae_page():
         ax4.boxplot([ae_mse, vae_mse], labels=["AE", "VAE"], patch_artist=True,
                      boxprops=dict(facecolor="lightblue"), medianprops=dict(color="red"))
         ax4.set_ylabel("MSE")
-        ax4.set_title("MSE 箱线图对比")
+        ax4.set_title("MSE Boxplot Comparison")
         ax4.grid(True, alpha=0.3)
 
         plt.tight_layout()
