@@ -1,0 +1,45 @@
+Device: cpu
+Save dir: D:\homework\imghw\hw8\saved_models
+
+Loading MNIST data...
+Train batches: 938, Test batches: 157
+
+============================================================
+1. Training Autoencoder (latent_dim=2, epochs=5)
+============================================================
+  AE Epoch 1/5 - Loss: 0.052704
+  AE Epoch 2/5 - Loss: 0.042952
+  AE Epoch 3/5 - Loss: 0.041062
+  AE Epoch 4/5 - Loss: 0.040051
+  AE Epoch 5/5 - Loss: 0.039361
+  AE done in 260.7s, final loss: 0.039361
+
+============================================================
+2. Training VAE (latent_dim=2, epochs=5)
+============================================================
+  VAE Epoch 1/5 - Total Loss: 46.6501
+  VAE Epoch 2/5 - Total Loss: 40.1821
+  VAE Epoch 3/5 - Total Loss: 38.7089
+  VAE Epoch 4/5 - Total Loss: 37.9570
+  VAE Epoch 5/5 - Total Loss: 37.4275
+  VAE done in 258.1s, final loss: 37.4275
+
+============================================================
+3. Training DCGAN (noise_dim=100, epochs=10)
+============================================================
+  DCGAN Epoch 1/10 - G Loss: 4.1279 | D Loss: 0.4370
+  DCGAN Epoch 2/10 - G Loss: 4.0184 | D Loss: 0.4264
+  DCGAN Epoch 3/10 - G Loss: 4.3510 | D Loss: 0.3939
+  DCGAN Epoch 4/10 - G Loss: 4.5947 | D Loss: 0.3863
+  DCGAN Epoch 5/10 - G Loss: 4.6492 | D Loss: 0.3856
+  DCGAN Epoch 6/10 - G Loss: 4.8421 | D Loss: 0.3791
+  DCGAN Epoch 7/10 - G Loss: 4.4209 | D Loss: 0.4002
+  DCGAN Epoch 8/10 - G Loss: 4.7187 | D Loss: 0.3804
+  DCGAN Epoch 9/10 - G Loss: 4.5699 | D Loss: 0.3862
+  DCGAN Epoch 10/10 - G Loss: 4.5606 | D Loss: 0.3912
+  DCGAN done in 3251.8s
+  Final G Loss: 4.5606 | D Loss: 0.3912
+
+============================================================
+ALL MODELS TRAINED SUCCESSFULLY!
+============================================================
