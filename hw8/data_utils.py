@@ -47,7 +47,7 @@ def get_mnist_loaders(batch_size: int = 128, data_dir: str = "data"):
         transforms.ToTensor(),
     ])
 
-    # 尝试本地加载，找不到就尝试解压 .gz 再加载
+    # 尝试本地加载，找不到就解压 .gz，再不行就自动下载
     try:
         train_dataset = datasets.MNIST(
             root=data_dir, train=True, download=False, transform=transform
@@ -56,13 +56,22 @@ def get_mnist_loaders(batch_size: int = 128, data_dir: str = "data"):
             root=data_dir, train=False, download=False, transform=transform
         )
     except RuntimeError:
-        _decompress_mnist(data_dir)
-        train_dataset = datasets.MNIST(
-            root=data_dir, train=True, download=False, transform=transform
-        )
-        test_dataset = datasets.MNIST(
-            root=data_dir, train=False, download=False, transform=transform
-        )
+        try:
+            _decompress_mnist(data_dir)
+            train_dataset = datasets.MNIST(
+                root=data_dir, train=True, download=False, transform=transform
+            )
+            test_dataset = datasets.MNIST(
+                root=data_dir, train=False, download=False, transform=transform
+            )
+        except RuntimeError:
+            print(f"解压失败，自动下载 MNIST 到 {data_dir}/ ...")
+            train_dataset = datasets.MNIST(
+                root=data_dir, train=True, download=True, transform=transform
+            )
+            test_dataset = datasets.MNIST(
+                root=data_dir, train=False, download=True, transform=transform
+            )
 
     train_loader = DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
